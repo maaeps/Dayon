@@ -41,7 +41,7 @@ import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class Assisted implements Subscriber, ClipboardOwner {
-	private AssistedFrame frame;
+	//private AssistedFrame frame;
 
 	private NetworkAssistedEngineConfiguration configuration;
 
@@ -59,12 +59,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	}
 
 	public void start() {
-		frame = new AssistedFrame();
+		//frame = new AssistedFrame();
 
-		FatalErrorHandler.attachFrame(frame);
-		KeyboardErrorHandler.attachFrame(frame);
+		//FatalErrorHandler.attachFrame(frame);
+		//KeyboardErrorHandler.attachFrame(frame);
 
-		frame.setVisible(true);
+		//frame.setVisible(true);
 
 		// accept own cert, avoid PKIX path building exception
 		SSLContext sc = null;
@@ -82,12 +82,16 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 		configuration = new NetworkAssistedEngineConfiguration();
 
-		final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-		final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+		//TODO:: connection hier anpassen
+		final String ip = "localhost";//SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
+		//final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
+		final int port = 8080;//SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+		//final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
 		if ((ip == null || port == -1) && !requestConnectionSettings()) {
 			Log.info("Bye!");
-			System.exit(0);
+			//meins
+			//System.exit(0);
 		}
 
 		Log.info("Configuration " + configuration);
@@ -95,13 +99,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		// Should not block as called from the network incoming message thread (!)
 		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = (engine, config) -> {
 			onCaptureEngineConfigured(engine, config);
-			frame.onConnected();
+			//frame.onConnected();
 		};
 
 		// Should not block as called from the network incoming message thread (!)
 		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = (engine, config) -> {
 			onCompressorEngineConfigured(engine, config);
-			frame.onConnected();
+			//frame.onConnected();
 		};
 
 		// Should not block as called from the network incoming message thread (!)
@@ -111,7 +115,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 		controlHandler.subscribe(this);
 
-		frame.onConnecting(configuration);
+		//frame.onConnecting(configuration);
 
 		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
 
@@ -151,7 +155,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		pane.add(assistantPortNumberLbl);
 		pane.add(assistantPortNumberTextField);
 
-		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, () -> {
+		/*final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, () -> {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyIpAddress");
@@ -166,15 +170,16 @@ public class Assisted implements Subscriber, ClipboardOwner {
             return SystemUtilities.isValidPortNumber(portNumber) ? null : Babylon.translate("connection.settings.invalidPortNumber");
         });
 
-		if (ok) {
+		if (ok) {*/
 			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText(),
 					Integer.valueOf(assistantPortNumberTextField.getText()));
 			if (!xconfiguration.equals(configuration)) {
 				configuration = xconfiguration;
 				configuration.persist();
 			}
-		}
-		return ok;
+		/*}
+		return ok;*/
+		return true;
 	}
 
 	/**
